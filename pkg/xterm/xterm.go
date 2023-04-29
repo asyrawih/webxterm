@@ -102,6 +102,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 		go func() {
 			for {
 				messageType, data, err := connection.ReadMessage()
+				log.Info().Msg("Repeated")
 				if err != nil {
 					if !connectionClosed {
 						log.Warn().Msgf("failed to get next reader: %s", err)
