@@ -30,7 +30,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 			log.Err(err).Msg("")
 		}
 
-		command := exec.Command("bash")
+		command := exec.Command("fish")
 		command.Env = os.Environ()
 		tty, err := pty.Start(command)
 		if err != nil {
@@ -82,6 +82,10 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 		go func() {
 			errorCounter := 0
 			for {
+				if errorCounter >= 10 {
+					waiter.Done()
+					break
+				}
 				buffer := make([]byte, 4028)
 				n, err := tty.Read(buffer)
 				if err != nil {
