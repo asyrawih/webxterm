@@ -14,16 +14,9 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Add("Content-type", "application/json")
-		if _, err := w.Write([]byte("Hello World")); err != nil {
-			printError(err)
-		}
-	})
-
 	r.HandleFunc("/ws", xterm.HandleXtermConnection())
 
-	listenOnAddress := fmt.Sprintf("%s:%d", "localhost", 3000)
+	listenOnAddress := fmt.Sprintf("%s:%d", "0.0.0.0", 3000)
 	log.Info().Msg("Listening on " + listenOnAddress)
 
 	server := http.Server{
