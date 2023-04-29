@@ -62,6 +62,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 			return nil
 		})
 
+		var connectionClosed bool
 		var waiter sync.WaitGroup
 		waiter.Add(1)
 
@@ -102,6 +103,10 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 			for {
 				messageType, data, err := connection.ReadMessage()
 				if err != nil {
+					if !connectionClosed {
+						log.Warn().Msgf("failed to get next reader: %s", err)
+						return
+					}
 					log.Err(err).Msg("")
 				}
 
@@ -139,6 +144,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 
 		waiter.Wait()
 		log.Info().Msg("clossing the connection")
+		connectionClosed = true
 	}
 }
 
