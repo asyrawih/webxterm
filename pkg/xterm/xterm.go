@@ -88,6 +88,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 						log.Err(err).Msg("Error Write the TTY To xtermjs")
 					}
 					log.Err(err).Msg("Error Read the TTY")
+					return
 				}
 
 				if err := connection.WriteMessage(websocket.BinaryMessage, buffer[:n]); err != nil {
