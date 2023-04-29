@@ -2,6 +2,7 @@ package xterm
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -132,6 +133,29 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 				if dataLength == -1 { // invalid
 					log.Warn().Msg("failed to get the correct number of bytes read, ignoring message")
 					continue
+				}
+
+				if messageType == websocket.BinaryMessage {
+					if dataBuffer[0] == 1 {
+						ttySize := &TTYSize{}
+						resizeMessage := bytes.Trim(dataBuffer[1:], " \n\r\t\x00\x01")
+						if err = json.Unmarshal(resizeMessage, ttySize); err != nil {
+							log.Warn().Msgf(
+								"failed to unmarshal received resize message '%s': %s",
+								string(resizeMessage),
+								err,
+							)
+							continue
+						}
+						log.Info().Msgf("resizing tty to use %v rows and %v columns...", ttySize.Rows, ttySize.Cols)
+						if err = pty.Setsize(tty, &pty.Winsize{
+							Rows: ttySize.Rows,
+							Cols: ttySize.Cols,
+						}); err != nil {
+							log.Warn().Msgf("failed to resize tty, error: %s", err)
+						}
+						continue
+					}
 				}
 
 				// write to tty
