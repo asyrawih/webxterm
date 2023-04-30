@@ -22,6 +22,18 @@ type HandlerOpts struct {
 	Command string
 }
 
+/*
+Returns a function that handles an xterm.js connection by creating a PTY and
+forwarding its input and output through the websocket connection. The function
+takes an http.ResponseWriter and an http.Request as arguments.
+
+The returned function upgrades the connection to a websocket connection, sets
+up a ping handler, and starts three goroutines that handle the connection. The
+first goroutine sends a ping message to the client every 10 seconds. The second
+goroutine reads from the PTY and writes to the websocket connection. The third
+goroutine reads from the websocket connection and writes to the PTY.
+The function returns no values.
+*/
 func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		upgrader := getConnectionUpgrader()
@@ -178,6 +190,13 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+/*
+getConnectionUpgrader returns a websocket.Upgrader with a CheckOrigin function that always returns true and a HandshakeTimeout set to 0.
+
+Returns:
+
+	websocket.Upgrader: An object that can upgrade an HTTP connection to a WebSocket connection.
+*/
 func getConnectionUpgrader() websocket.Upgrader {
 	return websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
