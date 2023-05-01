@@ -16,7 +16,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/ws/{name}", xterm.HandleXtermConnection())
+	r.HandleFunc("/ws", xterm.HandleXtermConnection())
 	r.HandleFunc("/ip", httphandler.GetIP())
 	r.HandleFunc("/ping", websockethandler.PingServer("google.com"))
 

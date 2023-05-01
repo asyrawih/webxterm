@@ -41,7 +41,7 @@ func SendPing(conn *websocket.Conn, wg *sync.WaitGroup) {
 		log.Err(err).Msg("Error Start TTY")
 	}
 
-	for i := 0; i < 10; i++ {
+	for {
 		buffer := make([]byte, 1024)
 		n, err := tty.Read(buffer)
 		if err != nil {
