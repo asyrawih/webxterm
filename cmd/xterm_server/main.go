@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"webxterm/internal/httphandler"
+	"webxterm/internal/websockethandler"
 	"webxterm/pkg/xterm"
 
 	"github.com/gorilla/mux"
@@ -14,7 +16,9 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/ws", xterm.HandleXtermConnection())
+	r.HandleFunc("/ws/{name}", xterm.HandleXtermConnection())
+	r.HandleFunc("/ip", httphandler.GetIP())
+	r.HandleFunc("/ping", websockethandler.PingServer("google.com"))
 
 	listenOnAddress := fmt.Sprintf("%s:%d", "0.0.0.0", 3000)
 	log.Info().Msg("Listening on " + listenOnAddress)

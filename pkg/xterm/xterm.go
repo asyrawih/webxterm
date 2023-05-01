@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/creack/pty"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog/log"
 )
@@ -42,7 +43,11 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 			log.Err(err).Msg("")
 		}
 
-		command := exec.Command("fish")
+		m := mux.Vars(r)
+		name := m["name"]
+		fmt.Printf("name: %v\n", name)
+
+		command := exec.Command("ssh")
 		command.Env = os.Environ()
 		tty, err := pty.Start(command)
 		if err != nil {
