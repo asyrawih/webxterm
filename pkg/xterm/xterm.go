@@ -42,7 +42,7 @@ func HandleXtermConnection() func(http.ResponseWriter, *http.Request) {
 			log.Err(err).Msg("")
 		}
 
-		command := exec.Command("fish")
+		command := exec.Command("hash")
 		command.Env = os.Environ()
 		tty, err := pty.Start(command)
 		if err != nil {
