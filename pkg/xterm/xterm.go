@@ -15,13 +15,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type HandlerOpts struct {
-	// Arguments is a list of strings to pass as arguments to the specified COmmand
-	Arguments []string
-	// Command is the path to the binary we should create a TTY for
-	Command string
-}
-
 /*
 Returns a function that handles an xterm.js connection by creating a PTY and
 forwarding its input and output through the websocket connection. The function
