@@ -1,38 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"webxterm/internal/httphandler"
-	"webxterm/internal/websockethandler"
-	"webxterm/pkg/xterm"
-
-	"github.com/gorilla/mux"
-	"github.com/rs/zerolog/log"
+	"webxterm/internal/manager"
 )
 
 // main function  
 func main() {
-	r := mux.NewRouter()
+	tm := manager.NewTTYServerManagar()
 
-	r.HandleFunc("/ws", xterm.HandleXtermConnection())
-	r.HandleFunc("/ip", httphandler.GetIP())
-	r.HandleFunc("/ping", websockethandler.PingServer("google.com"))
+	server1 := manager.NewServer("ws", manager.Options{
+		Host: "0.0.0.0",
+		Port: "3000",
+	})
 
-	listenOnAddress := fmt.Sprintf("%s:%d", "0.0.0.0", 3000)
-	log.Info().Msg("Listening on " + listenOnAddress)
+	server2 := manager.NewServer("sw", manager.Options{
+		Host: "0.0.0.0",
+		Port: "3001",
+	})
 
-	server := http.Server{
-		Addr:    listenOnAddress,
-		Handler: r,
-	}
-
-	if err := server.ListenAndServe(); err != nil {
-		printError(err)
-	}
-}
-
-func printError(err error) {
-	log.Error().Err(err).Msg("")
+	tm.AddServer(server1)
+	tm.AddServer(server2)
+	tm.Serve()
+	select {}
 }
