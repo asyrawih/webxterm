@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
 
 	"webxterm/internal/manager"
 
@@ -23,12 +25,20 @@ func main() {
 		Port: "3001",
 	})
 
+	server3 := manager.NewServer("sw", manager.Options{
+		Host: "0.0.0.0",
+		Port: "3002",
+	})
+
 	tm.AddServer(server1)
 	tm.AddServer(server2)
+	tm.AddServer(server3)
 
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
 	go tm.Serve()
 
-	select {}
+	<-signalChan
 }
 
 func NewhttpServer() {
