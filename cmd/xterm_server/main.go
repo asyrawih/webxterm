@@ -1,7 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+
 	"webxterm/internal/manager"
+
+	"github.com/gorilla/mux"
 )
 
 // main function  
@@ -20,6 +25,15 @@ func main() {
 
 	tm.AddServer(server1)
 	tm.AddServer(server2)
-	tm.Serve()
+
+	go tm.Serve()
+
 	select {}
+}
+
+func NewhttpServer() {
+	r := mux.NewRouter()
+	r.HandleFunc("/spawn", func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprintf(w, "hello")
+	})
 }
